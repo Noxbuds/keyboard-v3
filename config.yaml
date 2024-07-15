@@ -11,98 +11,217 @@ units:
   bat_plug_w: 7.6
   bat_plug_h: 5.9
 
+  # m2 screws
+  screw_radius: 1.5
+  standoff_radius: 2.5
+
 points:
   zones:
     main:
       # fixes kicad placement
-      anchor.shift: [50, -65]
+      #anchor.shift: [50, -65]
       columns:
-        inner:
-          rows:
-            top.skip: true
-          key:
-            column_net: P1
         index:
           key:
             stagger: -6
-            column_net: P2
+            column_net: P1
         middle:
           key:
             stagger: 3
-            column_net: P3
+            column_net: P2
         ring:
           key:
             stagger: -4
-            column_net: P4
+            column_net: P3
         pinky:
           key:
             splay: -4
             stagger: -10
-            column_net: P5
-          rows:
-            top.skip: true
+            column_net: P4
+          rows.top.skip: true
       rows:
-        bottom:
-          row_net: P8
         home:
           row_net: P9
         top:
           row_net: P10
     thumb:
       anchor:
-        ref: main_inner_bottom
-        shift: [-18, -30]
-        rotate: 15
+        ref: main_index_home
+        shift: [-1.5kx, -2.3kx]
+        rotate: 20
       rows:
         main:
-          row_net: P7
+          row_net: P8
       columns:
         one:
-          key.column_net: P1
+          key:
+            column_net: P1
+            height: 1.5kx
         two:
-          key.column_net: P2
+          key:
+            column_net: P2
+            height: 1.5kx
 outlines:
   raw:
     - what: rectangle
-      where: true
+      where: /main_/
       size: [px, py]
+    - what: rectangle
+      where: /thumb/
+      size: [px, 1.5py]
   
   keys:
     - what: rectangle
-      where: true
+      where: /main_/
       size: [kx - 0.5, ky - 0.5]
+    - what: rectangle
+      where: /thumb/
+      size: [kx - 0.5, 1.5ky - 0.5]
   
   board:
     - what: polygon
       operation: stack
       points:
         - ref: thumb_one_main
-          shift: [-0.5px, 0.5py]
-        - ref: main_inner_bottom
-          shift: [-1.425px, 0.5py]
-        - ref: main_inner_bottom
-          shift: [-0.5px, 0.5py]
-        - ref: main_inner_home
-          shift: [-0.5px, 0.5py]
-        - ref: main_index_top
-          shift: [-0.5px, 0.5py]
-        - ref: main_middle_top
-          shift: [-0.5px, 0.5py]
-        - ref: main_middle_top
-          shift: [0.5px, 0.5py]
-        - ref: main_ring_top
-          shift: [0.5px, 0.5py]
-        - ref: main_pinky_home
-          shift: [0.5px, 0.5py]
-        - ref: main_pinky_bottom
-          shift: [0.5px, -0.5py]
+          shift: [-0.5px, 0.7py]
         - ref: thumb_one_main
-          shift: [-0.5px, -0.5py]
-      fillet: 4
+          shift: [0.025px, 0.7py]
+        - ref: main_index_home
+          shift: [-0.5px, -0.95py]
+        - ref: main_index_top
+          shift: [-0.5px, 0.5py + 3]
+        - ref: main_ring_top
+          shift: [0.5px, 0.5py + 4]
+        - ref: main_ring_top
+          shift: [1.5px - 0.5padding - 0.3, 0.5py + 4]
+        - ref: main_ring_home
+          shift: [1.5px - 0.5padding - 0.3, -1.2py + 4]
+        - ref: thumb_one_main
+          shift: [-0.5px, -0.7py]
   
-  switchplate:
+  _board_inner:
     - name: board
+      expand: 1
+
+  _board_extra:
+    - name: _board_inner
+      expand: 2
+      fillet: 2
+
+  _seeed_cutout:
+    - what: rectangle
+      where:
+        ref: main_ring_top
+        shift: [
+          0.5kx + 2 + xiao_w/2,
+          -0.5ky + xiao_h/2 + 3
+        ]
+      size: [xiao_w + 2, xiao_h + 8]
+
+  _power_cutout:
+    - what: rectangle
+      where:
+        ref: main_ring_top
+        shift: [0.5kx + 2, -0.5ky]
+      adjust:
+        shift: [xiao_w + 2.3, -5]
+      size: [6, 8.5]
+
+  switchplate:
+    - name: _board_extra
     - name: keys
+      operation: subtract
+    - name: _seeed_cutout
+      operation: subtract
+    - name: _power_cutout
+      operation: subtract
+
+  outline:
+    - name: _board_extra
+    - name: _board_inner
+      operation: subtract
+  
+  mounting:
+    - what: circle
+      where:
+        ref: main_index_top
+        shift: [0, -0.3ky]
+      radius: screw_radius
+    - what: circle
+      where:
+        ref: main_index_home
+        shift: [0, -0.3ky]
+      radius: screw_radius
+    - what: circle
+      where:
+        ref: main_ring_top
+        shift: [0, -0.3ky]
+      radius: screw_radius
+    - what: circle
+      where:
+        ref: main_pinky_home
+        shift: [0, -0.3ky]
+      radius: screw_radius
+    - what: circle
+      where:
+        ref: thumb_one_main
+        shift: [0, -0.3ky]
+      radius: screw_radius
+
+  standoff:
+    - what: circle
+      where:
+        ref: main_index_top
+        shift: [0, -0.3ky]
+      radius: standoff_radius
+    - what: circle
+      where:
+        ref: main_index_home
+        shift: [0, -0.3ky]
+      radius: standoff_radius
+    - what: circle
+      where:
+        ref: main_ring_top
+        shift: [0, -0.3ky]
+      radius: standoff_radius
+    - what: circle
+      where:
+        ref: main_pinky_home
+        shift: [0, -0.3ky]
+      radius: standoff_radius
+    - what: circle
+      where:
+        ref: thumb_one_main
+        shift: [0, -0.3ky]
+      radius: standoff_radius
+
+cases:
+  _holes:
+    - name: mounting
+      extrude: 5
+  _standoffs:
+    - name: standoff
+      extrude: 5
+  bottom:
+    - name: outline
+      extrude: 5 + 1.6 + 1
+    - what: case
+      name: _standoffs
+    - what: case
+      name: _holes
+      operation: subtract
+    - name: _board_extra
+      extrude: 1
+  switchplate:
+    - name: switchplate
+      extrude: 1.2
+    - name: outline
+      extrude: 8
+    - name: _seeed_cutout
+      extrude: 8 - 1.2
+      operation: subtract
+    - name: _power_cutout
+      extrude: 4
       operation: subtract
 
 pcbs:
@@ -146,64 +265,70 @@ pcbs:
       seeed_xiao:
         what: seeed_xiao
         where:
-          ref: main_inner_bottom
-          shift: [-29, -13]
+          ref: main_ring_top
+          shift: [0.5kx + 2, -0.5ky]
           rotate: -90
       hole_top_left:
         what: mountinghole
         where:
-          ref: main_inner_home
+          ref: main_index_top
           shift: [0, -0.3ky]
       hole_bottom_left:
         what: mountinghole
         where:
-          ref: main_inner_bottom
-          shift: [0, -0.3ky]
-      hole_top_middle:
-        what: mountinghole
-        where:
-          ref: main_middle_top
-          shift: [0, -0.3ky]
-      hole_bottom_middle:
-        what: mountinghole
-        where:
-          ref: main_middle_bottom
+          ref: main_index_home
           shift: [0, -0.3ky]
       hole_top_right:
         what: mountinghole
         where:
-          ref: main_pinky_home
+          ref: main_ring_top
           shift: [0, -0.3ky]
       hole_bottom_right:
         what: mountinghole
         where:
-          ref: main_pinky_bottom
+          ref: main_pinky_home
           shift: [0, -0.3ky]
       hole_thumb:
         what: mountinghole
         where:
           ref: thumb_one_main
           shift: [0, -0.3ky]
-      power_switch:
+      power_switch_f:
         what: slider
         where.$extends: pcbs.nox_30.footprints.seeed_xiao.where
         adjust:
-          shift: [5, 0]
-          rotate: 180
+          shift: [5, xiao_w]
+        params:
+          side: F
+          from: BAT+
+          to: RAW
+      power_switch_b:
+        what: slider
+        where.$extends: pcbs.nox_30.footprints.seeed_xiao.where
+        adjust:
+          shift: [5, xiao_w]
         params:
           side: B
           from: BAT+
-          to: VCC5
+          to: RAW
       battery:
-        what: jstph
-          #where.$extends: pcbs.nox_30.footprints.seeed_xiao.where
+        what: battery_pad
         where:
-          ref: main_index_bottom
-          shift: [-2, -0.5ky - 0.5bat_plug_h - 2]
-          rotate: -90
+          ref: main_ring_home
+          shift: [3, -ky]
+          rotate: 90
         adjust:
           #shift: [-1, bat_plug_w + 17]
         params:
-          pos: BAT+
-          neg: GND
+          plus: BAT+
+          minus: GND
+      raw_pad:
+        what: pad
+        where.$extends: pcbs.nox_30.footprints.seeed_xiao.where
+        adjust:
+          shift: [2, xiao_w/2]
+        params:
+          net: RAW
+          width: 1.5
+          height: 1.5
 
