@@ -72,11 +72,8 @@ outlines:
   
   keys:
     - what: rectangle
-      where: /main_/
-      size: [kx - 0.5, ky - 0.5]
-    - what: rectangle
-      where: /thumb/
-      size: [kx - 0.5, 1.5ky - 0.5]
+      where: true
+      size: 14
   
   board:
     - what: polygon
@@ -127,6 +124,17 @@ outlines:
         shift: [xiao_w + 2.3, -5]
       size: [6, 8.5]
 
+  _battery:
+    - what: rectangle
+      where:
+        ref: main_ring_home
+        shift: [3 - 18, -ky - 6]
+      size: [32, 18]
+  
+  battery_outline:
+    - name: _battery
+      expand: 2
+
   switchplate:
     - name: _board_extra
     - name: keys
@@ -134,6 +142,8 @@ outlines:
     - name: _seeed_cutout
       operation: subtract
     - name: _power_cutout
+      operation: subtract
+    - name: _battery
       operation: subtract
 
   outline:
@@ -194,7 +204,7 @@ outlines:
         ref: thumb_one_main
         shift: [0, -0.3ky]
       radius: standoff_radius
-
+  
 cases:
   _holes:
     - name: mounting
@@ -212,6 +222,14 @@ cases:
       operation: subtract
     - name: _board_extra
       extrude: 1
+    - name: _power_cutout
+      extrude: 4
+      shift: [0, 0, 4]
+      operation: subtract
+    - name: _seeed_cutout
+      extrude: 8 - 1.2
+      operation: subtract
+      shift: [0, 0, 4]
   switchplate:
     - name: switchplate
       extrude: 1.2
@@ -222,6 +240,11 @@ cases:
       operation: subtract
     - name: _power_cutout
       extrude: 4
+      operation: subtract
+    - name: battery_outline
+      extrude: 8
+    - name: _battery
+      extrude: 6
       operation: subtract
 
 pcbs:
